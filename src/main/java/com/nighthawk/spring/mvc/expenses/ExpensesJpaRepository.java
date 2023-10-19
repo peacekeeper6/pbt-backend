@@ -1,10 +1,8 @@
-package com.nighthawk.spring_portfolio.mvc.expenses;
+package com.nighthawk.spring.mvc.expenses;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-// import org.springframework.data.jpa.repository.Query;
 
-// import com.nighthawk.spring_portfolio.mvc.race.Race;
-import com.nighthawk.spring_portfolio.mvc.user.User;
+import com.nighthawk.spring.mvc.user.User;
 
 import java.util.List;
 
@@ -39,16 +37,13 @@ public interface ExpensesJpaRepository extends JpaRepository<Expenses, Long> {
 
     Expenses findByInsurance(double insurance);
 
-    Expenses findByPersonalExpenses(double personalExpenses);
+    Expenses findByPersonal(double personal);
 
     Expenses findBySubscriptions(double subscriptions);
 
     Expenses findByInvestments(double investments);
 
     Expenses findByMiscellaneous(double miscellaneous);
-
-
-    // Dashboard findByRaceAndUserAndBetActive(Race race, User user, Boolean betActive);
 
     // // Custom JPA query
     // @Query(value = "SELECT * FROM Person p WHERE p.name LIKE ?1 or p.email LIKE ?1", nativeQuery = true)

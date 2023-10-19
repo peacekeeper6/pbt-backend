@@ -1,10 +1,9 @@
-package com.nighthawk.spring_portfolio.mvc.income;
+package com.nighthawk.spring.mvc.dashboard;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 // import org.springframework.data.jpa.repository.Query;
 
-// import com.nighthawk.spring_portfolio.mvc.race.Race;
-import com.nighthawk.spring_portfolio.mvc.user.User;
+import com.nighthawk.spring.mvc.user.User;
 
 import java.util.List;
 
@@ -15,23 +14,21 @@ Extends the JpaRepository interface from Spring Data JPA.
 -- Via JPA the developer can retrieve database from relational databases to Java objects and vice versa.
  */
 
-public interface IncomeJpaRepository extends JpaRepository<Income, Long> {
-    List<Income> findAllByOrderByIdAsc(); // for now return a list, its concatenated and users have ability to expand if need be
+public interface DashboardJpaRepository extends JpaRepository<Dashboard, Long> {
+    List<Dashboard> findAllByOrderByIdAsc(); // for now return a list, its concatenated and users have ability to expand if need be
     // I want this to return everything 
-    
+
     // List<Dashboard> findAllByRace(Race race);
 
     // List<Dashboard> findAllById(Long id);
 
-    List<Income> findAllByUser(User user);
+    List<Dashboard> findAllByUser(User user);
     
-    Income findBySalary(double salary);
+    List<Dashboard> findByOrderByIncomeDesc();
 
-    Income findByInvestments(double investments);
+    List<Dashboard> findByOrderByExpensesDesc();
 
-    Income findByAllowance(double allowance);
-
-    Income findByMiscellaneous(double miscellaneous);
+    List<Dashboard> findByOrderByBudgetingDesc();
     // Dashboard findByRaceAndUserAndBetActive(Race race, User user, Boolean betActive);
 
     // // Custom JPA query

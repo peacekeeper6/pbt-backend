@@ -1,14 +1,13 @@
-package com.nighthawk.spring_portfolio.mvc.dashboard;
+package com.nighthawk.spring.mvc.dashboard;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+// import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-// import com.nighthawk.spring_portfolio.mvc.calendar.Calendar;
 
 @RestController
 @RequestMapping("/dashboard")
@@ -22,20 +21,20 @@ public class DashboardApiController {
         return new ResponseEntity<>(dashboardRepository.findAllByOrderByIdAsc(), HttpStatus.OK);
     }
 
-    @GetMapping("/") 
-    public ResponseEntity<List<Dashboard>> getIncome() {
-        return new ResponseEntity<>(dashboardRepository.findByOrderByIncomeNumberAsc(), HttpStatus.OK);
-    }
+    // @GetMapping("/") 
+    // public ResponseEntity<List<Dashboard>> getIncome() {
+    //     return new ResponseEntity<>(dashboardRepository.findByOrderByIncomeDesc(), HttpStatus.OK);
+    // }
 
-    @GetMapping("/") 
-    public ResponseEntity<List<Dashboard>> getExpenses() {
-        return new ResponseEntity<>(dashboardRepository.findByOrderByExpensesNumberAsc(), HttpStatus.OK);
-    }
+    // @GetMapping("/") 
+    // public ResponseEntity<List<Dashboard>> getExpenses() {
+    //     return new ResponseEntity<>(dashboardRepository.findByOrderByExpensesDesc(), HttpStatus.OK);
+    // }
 
-    @GetMapping("/") 
-    public ResponseEntity<List<Dashboard>> getBudgeting() {
-        return new ResponseEntity<>(dashboardRepository.findByOrderByBudgetingNumberAsc(), HttpStatus.OK);
-    }
+    // @GetMapping("/") 
+    // public ResponseEntity<List<Dashboard>> getBudgeting() {
+    //     return new ResponseEntity<>(dashboardRepository.findByOrderByBudgetingDesc(), HttpStatus.OK);
+    // }
 
     // post mapping for income, outcome, budgeting totals
 

@@ -1,6 +1,7 @@
-package com.nighthawk.spring_portfolio.mvc.budgeting;
+package com.nighthawk.spring.mvc.budgeting;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -67,30 +68,37 @@ public class BudgetingApiController {
 
     //create
 
-    @PostMapping("/create/{shopping}/{eatingOut}/{subscriptions}/{travel}/{miscellaneous}")
-    public ResponseEntity<Budgeting> createBudgeting(@PathVariable(required=false) String shopping, @PathVariable(required=false) String eating,
+    @PostMapping("/create/{shopping}/{eating}/{subscriptions}/{travel}/{miscellaneous}")
+    public ResponseEntity<Double> createBudgeting(@PathVariable(required=false) String shopping, @PathVariable(required=false) String eating,
     @PathVariable(required=false) String subscriptions, @PathVariable(required=false) String travel, @PathVariable(required=false) String miscellaneous) {
-        Budgeting b = new Budgeting(null, shopping, eating, travel, miscellaneous);
+        double dShopping = Double.parseDouble(shopping);
+        double dEating = Double.parseDouble(eating);
+        double dSubscriptions = Double.parseDouble(subscriptions);
+        double dTravel = Double.parseDouble(travel);
+        double dMiscellaneous = Double.parseDouble(miscellaneous);
+
+        Budgeting b = new Budgeting(null, dShopping, dEating, dSubscriptions, dTravel, dMiscellaneous);
         // budgetingRepository.saveAndFlush(new Budgeting(shopping, eatingOut, travel, miscellaneous));
         budgetingRepository.saveAndFlush(b);
-        total = b.calculateBudgeting(shopping, eating, travel, miscellaneous);
-        budgetingRepository.saveAndFlush(total);
-        return new ResponseEntity<>(HttpStatus.OK);
+        Double total = b.calculateBudgeting();
+        // budgetingRepository.saveAndFlush(total);
+        return new ResponseEntity<>(total, HttpStatus.OK);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<Budgeting> updateListing(@PathVariable long id, @RequestBody Budgeting changes) {
-        Optional<Budgeting> optional = repository.findById(id);
+    public ResponseEntity<Double> updateListing(@PathVariable long id, @RequestBody Budgeting changes) {
+        Optional<Budgeting> optional = budgetingRepository.findById(id);
         if (optional.isPresent()) { // Good ID
             Budgeting a = optional.get(); // value from findByID
             a.setShopping(changes.getShopping()); // value from findByID
             a.setEating(changes.getEating()); // value from findByID
             a.setTravel(changes.getTravel()); // value from findByID
             a.setMiscellaneous(changes.getMiscellaneous()); // value from findByID
-            repository.save(a);
-            total = a.calculateBudgeting(shopping, eating, travel, miscellaneous);
-            repository.save(total);
-            return new ResponseEntity<>(a, HttpStatus.OK); // OK HTTP response: status code, headers, and body
+            budgetingRepository.save(a);
+            Double total = a.calculateBudgeting();
+            // double total = a.calculateBudgeting(shopping, eating, subscriptions, travel, miscellaneous);
+            // budgetingRepository.save(total);
+            return new ResponseEntity<>(total, HttpStatus.OK); // OK HTTP response: status code, headers, and body
         }
         // Bad ID
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
