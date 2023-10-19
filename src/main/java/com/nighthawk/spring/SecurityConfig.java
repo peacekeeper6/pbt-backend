@@ -69,9 +69,11 @@ public class SecurityConfig {
 				)
 				// list the requests/endpoints need to be authenticated
 				.authorizeHttpRequests(auth -> auth
-					.requestMatchers("/**").permitAll()
-					// .requestMatchers("/mvc/user/update/**", "/mvc/user/delete/**").authenticated()
-					// .requestMatchers("/api/user/**").authenticated()
+					.requestMatchers("/authenticate").permitAll()
+					.requestMatchers("/mvc/user/update/**", "/mvc/user/delete/**").authenticated()
+					.requestMatchers("/api/user/**").authenticated()
+                    .requestMatchers("/").authenticated() // let users access main page 
+                    // but dont let them save changes aka input data for dashboard if they dont have an account
 				)
 				// support cors
 				.cors(Customizer.withDefaults())

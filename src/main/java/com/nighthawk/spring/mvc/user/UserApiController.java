@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+// import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+// import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -15,9 +15,9 @@ import java.util.*;
 @RequestMapping("/api/user")
 public class UserApiController {
 
-    PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
-    }
+    // PasswordEncoder passwordEncoder(){
+    //     return new BCryptPasswordEncoder();
+    // }
     //     @Autowired
     // private JwtTokenUtil jwtGen;
     /*
@@ -28,7 +28,9 @@ public class UserApiController {
     // Autowired enables Control to connect POJO Object through JPA
     @Autowired
     private UserJpaRepository repository;
-
+    
+    @Autowired
+    private UserDetailService userDetailService;
     /*
     GET List of People
      */
@@ -68,8 +70,9 @@ public class UserApiController {
     public ResponseEntity<Object> postUser(@RequestParam("email") String email,
                                              @RequestParam("password") String password) {
         User user = new User(email, password);
-        user.setPassword(passwordEncoder().encode(user.getPassword()));
-        repository.save(user);
+        // user.setPassword(passwordEncoder().encode(user.getPassword()));
+        userDetailService.save(user);
+        // repository.save(user);
         return new ResponseEntity<>(email +" is created successfully", HttpStatus.CREATED);
     }
 
