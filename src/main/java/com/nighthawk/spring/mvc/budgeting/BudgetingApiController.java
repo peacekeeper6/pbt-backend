@@ -69,8 +69,8 @@ public class BudgetingApiController {
     //create
 
     @PostMapping("/create/{shopping}/{eating}/{subscriptions}/{travel}/{miscellaneous}")
-    public ResponseEntity<Double> createBudgeting(@PathVariable(required=false) String shopping, @PathVariable(required=false) String eating,
-    @PathVariable(required=false) String subscriptions, @PathVariable(required=false) String travel, @PathVariable(required=false) String miscellaneous) {
+    public ResponseEntity<Double> createBudgeting(@PathVariable String shopping, @PathVariable String eating,
+    @PathVariable String subscriptions, @PathVariable String travel, @PathVariable String miscellaneous) {
         double dShopping = Double.parseDouble(shopping);
         double dEating = Double.parseDouble(eating);
         double dSubscriptions = Double.parseDouble(subscriptions);
