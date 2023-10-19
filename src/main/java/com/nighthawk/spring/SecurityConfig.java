@@ -1,6 +1,9 @@
 package com.nighthawk.spring;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import com.nighthawk.spring.mvc.jwt.JwtAuthenticationEntryPoint;
+import com.nighthawk.spring.mvc.jwt.JwtRequestFilter;
+import com.nighthawk.spring.mvc.user.UserDetailService;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,11 +32,27 @@ import org.springframework.security.web.header.writers.StaticHeadersWriter;
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
+    @Autowired
+	private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+
+	@Autowired
+	private JwtRequestFilter jwtRequestFilter;
+
+	@Autowired
+	private UserDetailService userDetailsService;
+
     // @Bean  // Sets up password encoding style
     PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
 
+	@Autowired
+	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+		// configure AuthenticationManager so that it knows from where to load
+		// user for matching credentials
+		// Use BCryptPasswordEncoder
+		auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+	}
 
 	@Bean
 	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
@@ -50,7 +69,9 @@ public class SecurityConfig {
 				)
 				// list the requests/endpoints need to be authenticated
 				.authorizeHttpRequests(auth -> auth
-					.requestMatchers("*").permitAll()
+					.requestMatchers("/**").permitAll()
+					// .requestMatchers("/mvc/user/update/**", "/mvc/user/delete/**").authenticated()
+					// .requestMatchers("/api/user/**").authenticated()
 				)
 				// support cors
 				.cors(Customizer.withDefaults())
@@ -71,11 +92,14 @@ public class SecurityConfig {
 				)
 				// make sure we use stateless session; 
 				// session won't be used to store user's state.
-				
+				.exceptionHandling(exceptions -> exceptions
+					.authenticationEntryPoint(jwtAuthenticationEntryPoint)
+				)
 				.sessionManagement(session -> session
 					.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 				)
 				// Add a filter to validate the tokens with every request
+				.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 			return http.build();
 	}
 }
