@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.nighthawk.spring.mvc.user.User;
 
 // import com.nighthawk.spring.mvc.expenses.Expenses;
 
@@ -61,23 +62,24 @@ public class IncomeApiController {
     //     return new ResponseEntity<>(total + " listed successfully!", HttpStatus.CREATED);
     // }
     @PostMapping("/create/{salary}/{investments}/{allowance}/{miscellaneous}")
-    public ResponseEntity<Double> createIncome(@PathVariable(required=false) String salary, @PathVariable(required=false) String investments,
+    public ResponseEntity<Income> createIncome(@PathVariable(required=false) String salary, @PathVariable(required=false) String investments,
     @PathVariable(required=false) String allowance, @PathVariable(required=false) String miscellaneous) {
         double dSalary = Double.parseDouble(salary);
         double dInvestments = Double.parseDouble(investments);
         double dAllowance = Double.parseDouble(allowance);
         double dMiscellaneous = Double.parseDouble(miscellaneous);
-
-        Income i = new Income(null, dSalary, dInvestments, dAllowance, dMiscellaneous);
+        User user = new User();
+        
+        Income i = new Income(user, dSalary, dInvestments, dAllowance, dMiscellaneous);
         // IncomeRepository.saveAndFlush(new Income(shopping, eatingOut, travel, miscellaneous));
-        incomeRepository.saveAndFlush(i);
-        Double total = i.calculateIncome();
+        incomeRepository.save(i);
+        double incomeTotal = i.calculateIncome();
         // incomeRepository.saveAndFlush(total);
-        return new ResponseEntity<>(total, HttpStatus.OK);
+        return new ResponseEntity<>(i, HttpStatus.OK);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<Double> updateIncome(@PathVariable long id, @RequestBody Income changes) {
+    public ResponseEntity<Income> updateIncome(@PathVariable long id, @RequestBody Income changes) {
         Optional<Income> optional = incomeRepository.findById(id);
         if (optional.isPresent()) { // Good ID
             Income a = optional.get(); // value from findByID
@@ -86,9 +88,9 @@ public class IncomeApiController {
             a.setAllowance(changes.getAllowance()); // value from findByID
             a.setMiscellaneous(changes.getMiscellaneous()); // value from findByID
             incomeRepository.save(a);
-            Double total = a.calculateIncome();
+            double incomeTotal = a.calculateIncome();
             // incomeRepository.save(total);
-            return new ResponseEntity<>(total, HttpStatus.OK); // OK HTTP response: status code, headers, and body
+            return new ResponseEntity<>(a, HttpStatus.OK); // OK HTTP response: status code, headers, and body
         }
         // Bad ID
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

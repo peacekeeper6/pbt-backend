@@ -7,12 +7,17 @@ import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nighthawk.spring.mvc.user.User;
 
 import lombok.AllArgsConstructor;
@@ -29,8 +34,10 @@ public class Budgeting {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JoinColumn(name = "user_id") // i dont get it
-    @ManyToOne(cascade = CascadeType.MERGE) // holds reference
+    @ManyToOne(cascade = CascadeType.MERGE, optional = false) // holds reference
+    @JoinColumn(name = "user_id") // this sets user id just fill it bro
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonIgnore
     private User user;
 
     // TODO: add annotations
@@ -54,8 +61,14 @@ public class Budgeting {
     @Column(nullable = true)
     private double miscellaneous;
 
-    public Budgeting(Long id, double shopping, double eating, double subscriptions, double travel, double miscellaneous) {
-        this.id = id;
+
+    // User userid = new User();
+    // User userid = // Retrieve or create a User entity
+    // userid.setUser(userid);
+    // entityManager.persist(userid);
+
+    public Budgeting(User user, double shopping, double eating, double subscriptions, double travel, double miscellaneous) {
+        this.user = user;
         this.shopping = shopping;
         this.eating = eating;
         this.subscriptions = subscriptions;

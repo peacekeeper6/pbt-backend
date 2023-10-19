@@ -12,6 +12,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nighthawk.spring.mvc.user.User;
 
 import lombok.AllArgsConstructor;
@@ -28,8 +32,10 @@ public class Expenses {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JoinColumn(name = "user_id") // i dont get it
-    @ManyToOne(cascade = CascadeType.MERGE) // holds reference
+    @ManyToOne(cascade = CascadeType.MERGE, optional = false) // holds reference
+    @JoinColumn(name = "user_id") // this sets user id just fill it bro
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonIgnore
     private User user;
 
     // TODO: add annotations
@@ -77,9 +83,11 @@ public class Expenses {
     @Column(nullable = true)
     private double miscellaneous;
     
-    public Expenses (Long id, double groceries, double transportation, double education, double housing, double shopping, 
+    public Expenses (User user, double groceries, double transportation, double education, double housing, double shopping, 
     double utilities, double insurance, double personal, double subscriptions, double investments, double miscellaneous) {
-        this.id = id;
+        // this.id = id;
+        // user.setId(id);
+        this.user = user;
         this.groceries = groceries;
         this.transportation = transportation;
         this.education = education;

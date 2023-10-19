@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.nighthawk.spring.mvc.user.User;
 
 @RestController
 @RequestMapping("/expenses")
@@ -97,7 +98,7 @@ public class ExpensesApiController {
     // this.miscellaneous = miscellaneous;
 
     @PostMapping("/create/{groceries}/{transportation}/{education}/{housing}/{shopping}/{utilities}/{insurance}/{personal}/{subscriptions}/{investments}/{miscellaneous}")
-    public ResponseEntity<Double> createExpenses(@PathVariable(required=false) String groceries, @PathVariable(required=false) String transportation,
+    public ResponseEntity<Expenses> createExpenses(@PathVariable(required=false) String groceries, @PathVariable(required=false) String transportation,
     @PathVariable(required=false) String education, @PathVariable(required=false) String housing, @PathVariable(required=false) String shopping, @PathVariable(required=false) String utilities,
     @PathVariable(required=false) String insurance, @PathVariable(required=false) String personal, @PathVariable(required=false) String subscription, @PathVariable(required=false) String investments,
     @PathVariable(required=false) String miscellaneous) {
@@ -112,17 +113,17 @@ public class ExpensesApiController {
         double dSubscriptions = Double.parseDouble(subscription);
         double dInvestments = Double.parseDouble(investments);
         double dMiscellaneous = Double.parseDouble(miscellaneous);
-        
-        Expenses e = new Expenses(null, dGroceries, dTransportation, dEducation, dHousing, dShopping, dUtilities, 
+        User user = new User();
+        Expenses e = new Expenses(user, dGroceries, dTransportation, dEducation, dHousing, dShopping, dUtilities, 
         dInsurance, dPersonal, dSubscriptions, dInvestments, dMiscellaneous);
         // ExpensesRepository.saveAndFlush(new Expenses(shopping, eatingOut, travel, miscellaneous));
         expensesRepository.saveAndFlush(e);
-        Double total = e.calculateExpenses();
-        return new ResponseEntity<>(total, HttpStatus.OK);
+        double expensesTotal = e.calculateExpenses();
+        return new ResponseEntity<>(e, HttpStatus.OK);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<Double> updateListing(@PathVariable long id, @RequestBody Expenses changes) {
+    public ResponseEntity<Expenses> updateListing(@PathVariable long id, @RequestBody Expenses changes) {
         Optional<Expenses> optional = expensesRepository.findById(id);
         if (optional.isPresent()) { // Good ID
             Expenses a = optional.get(); // value from findByID
@@ -137,8 +138,8 @@ public class ExpensesApiController {
             a.setInvestments(changes.getInvestments()); // value from findByID
             a.setMiscellaneous(changes.getMiscellaneous()); // value from findByID
             expensesRepository.save(a);
-            Double total = a.calculateExpenses();
-            return new ResponseEntity<>(total, HttpStatus.OK); // OK HTTP response: status code, headers, and body
+            double expensesTotal = a.calculateExpenses();
+            return new ResponseEntity<>(a, HttpStatus.OK); // OK HTTP response: status code, headers, and body
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }

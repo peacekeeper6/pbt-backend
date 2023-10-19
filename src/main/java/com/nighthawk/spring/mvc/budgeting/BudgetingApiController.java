@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.nighthawk.spring.mvc.user.User;
 
 @RestController
 @RequestMapping("/dashboard/budgeting")
@@ -69,24 +70,30 @@ public class BudgetingApiController {
     //create
 
     @PostMapping("/create/{shopping}/{eating}/{subscriptions}/{travel}/{miscellaneous}")
-    public ResponseEntity<Double> createBudgeting(@PathVariable String shopping, @PathVariable String eating,
-    @PathVariable String subscriptions, @PathVariable String travel, @PathVariable String miscellaneous) {
+    public ResponseEntity<Budgeting> createBudgeting(
+     @PathVariable String shopping, @PathVariable String eating,
+     @PathVariable String subscriptions, @PathVariable String travel, @PathVariable String miscellaneous) 
+                                                    { 
         double dShopping = Double.parseDouble(shopping);
         double dEating = Double.parseDouble(eating);
         double dSubscriptions = Double.parseDouble(subscriptions);
         double dTravel = Double.parseDouble(travel);
         double dMiscellaneous = Double.parseDouble(miscellaneous);
+        User user = new User();
 
-        Budgeting b = new Budgeting(null, dShopping, dEating, dSubscriptions, dTravel, dMiscellaneous);
+        Budgeting b = new Budgeting(user, dShopping, dEating, dSubscriptions, dTravel, dMiscellaneous);
         // budgetingRepository.saveAndFlush(new Budgeting(shopping, eatingOut, travel, miscellaneous));
-        budgetingRepository.saveAndFlush(b);
-        Double total = b.calculateBudgeting();
+        // System.out.println("went");
+        budgetingRepository.save(b);
+        // System.out.println("went in");
+        double budgetingTotal = b.calculateBudgeting();
+        // System.out.println("went through");
         // budgetingRepository.saveAndFlush(total);
-        return new ResponseEntity<>(total, HttpStatus.OK);
+        return new ResponseEntity<>(b, HttpStatus.OK);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<Double> updateListing(@PathVariable long id, @RequestBody Budgeting changes) {
+    public ResponseEntity<Budgeting> updateListing(@PathVariable long id, @RequestBody Budgeting changes) {
         Optional<Budgeting> optional = budgetingRepository.findById(id);
         if (optional.isPresent()) { // Good ID
             Budgeting a = optional.get(); // value from findByID
@@ -95,10 +102,10 @@ public class BudgetingApiController {
             a.setTravel(changes.getTravel()); // value from findByID
             a.setMiscellaneous(changes.getMiscellaneous()); // value from findByID
             budgetingRepository.save(a);
-            Double total = a.calculateBudgeting();
+            double budgetingTotal = a.calculateBudgeting();
             // double total = a.calculateBudgeting(shopping, eating, subscriptions, travel, miscellaneous);
             // budgetingRepository.save(total);
-            return new ResponseEntity<>(total, HttpStatus.OK); // OK HTTP response: status code, headers, and body
+            return new ResponseEntity<>(a, HttpStatus.OK); // OK HTTP response: status code, headers, and body
         }
         // Bad ID
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
