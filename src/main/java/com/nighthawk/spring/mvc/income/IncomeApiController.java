@@ -69,8 +69,8 @@ public class IncomeApiController {
         double dAllowance = Double.parseDouble(allowance);
         double dMiscellaneous = Double.parseDouble(miscellaneous);
         User user = new User();
-        
-        Income i = new Income(user, dSalary, dInvestments, dAllowance, dMiscellaneous);
+        Long id = user.get(); // intake user id to pair with income input
+        Income i = new Income(id, dSalary, dInvestments, dAllowance, dMiscellaneous);
         // IncomeRepository.saveAndFlush(new Income(shopping, eatingOut, travel, miscellaneous));
         incomeRepository.save(i);
         double incomeTotal = i.calculateIncome();

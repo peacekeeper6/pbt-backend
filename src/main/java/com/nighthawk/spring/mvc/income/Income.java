@@ -59,10 +59,10 @@ public class Income {
     @Column(nullable = true)
     private double miscellaneous;
 
-    public Income(User user, double salary, double investments, double allowance, double miscellaneous) {
+    public Income(Long id, double salary, double investments, double allowance, double miscellaneous) {
         // this.id = id;
         // user.setId(id);
-        this.user = user;
+        this.id = id;
         this.salary = salary;
         this.investments = investments;
         this.allowance = allowance;
