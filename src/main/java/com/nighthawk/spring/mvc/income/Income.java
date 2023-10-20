@@ -4,7 +4,9 @@ import jakarta.persistence.Basic;
 
 // import java.util.Date;
 
-import jakarta.persistence.CascadeType;
+// import jakarta.persistence.*;
+import jakarta.persistence.FetchType;
+// import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -36,11 +38,12 @@ public class Income {
     // @ManyToOne(cascade = CascadeType.MERGE) // holds reference
     // private User user;
 
-    @ManyToOne(cascade = CascadeType.MERGE, optional = false) // holds reference
-    @JoinColumn(name = "user_id") // this sets user id just fill it bro
+    // @ManyToOne(cascade = CascadeType.MERGE, optional = false) // holds reference
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false) // this sets user id just fill it bro
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
-    private User user;
+    private Income income;
 
     // TODO: add annotations
     @Basic(optional = true)
@@ -59,16 +62,18 @@ public class Income {
     @Column(nullable = true)
     private double miscellaneous;
 
-    public Income(Long id, double salary, double investments, double allowance, double miscellaneous) {
+    public Income(double salary, double investments, double allowance, double miscellaneous) {
         // this.id = id;
         // user.setId(id);
-        this.id = id;
+        // this.id = id;
         this.salary = salary;
         this.investments = investments;
         this.allowance = allowance;
         this.miscellaneous = miscellaneous;
     }
-
+    public void setIncome(Income i) {
+        this.income = i;
+    }
     public double calculateIncome () {
         // double dSalary = Double.parseDouble(sal);
         // double dInvestments = Double.parseDouble(inv);

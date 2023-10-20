@@ -4,11 +4,14 @@ import java.util.List;
 // import java.util.Map;
 import java.util.Optional;
 
+// import org.apache.velocity.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.nighthawk.spring.mvc.user.User;
+// import com.nighthawk.spring.mvc.exception.ResourceNotFoundException;
+import com.nighthawk.spring.mvc.user.UserJpaRepository;
 
 // import com.nighthawk.spring.mvc.expenses.Expenses;
 
@@ -17,11 +20,21 @@ import com.nighthawk.spring.mvc.user.User;
 public class IncomeApiController {
 
     @Autowired
+    private UserJpaRepository repository;
+
+
+    @Autowired
     private IncomeJpaRepository incomeRepository;
 
-    @GetMapping("/")
-    public ResponseEntity<List<Income>> getIncome() {
-        return new ResponseEntity<>(incomeRepository.findAllByOrderByIdAsc(), HttpStatus.OK);
+    @GetMapping("/{userId}/")
+    public ResponseEntity<List<Income>> getIncome(@PathVariable(value = "userId") Long userId) {
+        if (!repository.existsById(userId)) {
+            throw new NullPointerException("Cannot find User with id = " + userId); // placeholder exception, change later
+          }
+      
+          List<Income> incomes = incomeRepository.findAllByOrderByUserIdAsc(userId);
+          return new ResponseEntity<>(incomes, HttpStatus.OK);
+        // return new ResponseEntity<>(incomeRepository.findAllByOrderByIdAsc(), HttpStatus.OK);
     }
 
     // @PostMapping("/updateAll") // ability to update one or all depending on how many boxes are filled
@@ -61,19 +74,36 @@ public class IncomeApiController {
     //     incomeRepository.save(total);
     //     return new ResponseEntity<>(total + " listed successfully!", HttpStatus.CREATED);
     // }
-    @PostMapping("/create/{salary}/{investments}/{allowance}/{miscellaneous}")
-    public ResponseEntity<Income> createIncome(@PathVariable(required=false) String salary, @PathVariable(required=false) String investments,
-    @PathVariable(required=false) String allowance, @PathVariable(required=false) String miscellaneous) {
-        double dSalary = Double.parseDouble(salary);
-        double dInvestments = Double.parseDouble(investments);
-        double dAllowance = Double.parseDouble(allowance);
-        double dMiscellaneous = Double.parseDouble(miscellaneous);
-        User user = new User();
-        Long id = user.get(); // intake user id to pair with income input
-        Income i = new Income(id, dSalary, dInvestments, dAllowance, dMiscellaneous);
-        // IncomeRepository.saveAndFlush(new Income(shopping, eatingOut, travel, miscellaneous));
-        incomeRepository.save(i);
+    @PostMapping("/create/{userId}/{salary}/{investments}/{allowance}/{miscellaneous}")
+    public ResponseEntity<Income> createIncome(@PathVariable(value = "userId") Long userId, @PathVariable(required=false) Income salary, @PathVariable(required=false) Income investments,
+    @PathVariable(required=false) Income allowance, @PathVariable(required=false) Income miscellaneous) {
+        Double dSalary = new Double(salary.toString());
+        Double dInvestments = new Double(investments.toString());
+        Double dAllowance = new Double(allowance.toString());
+        Double dMisellaneous = new Double(miscellaneous.toString());
+        // Double.parseDouble(salary);
+        // double dInvestments = Double.parseDouble(investments);
+        // double dAllowance = Double.parseDouble(allowance);
+        // double dMiscellaneous = Double.parseDouble(miscellaneous);
+        // User user = new User();
+        // Long id = user.get(); // intake user id to pair with income input
+        // Income i = new Income(dSalary, dInvestments, dAllowance, dMiscellaneous);
+        // // IncomeRepository.saveAndFlush(new Income(shopping, eatingOut, travel, miscellaneous));
+        // incomeRepository.save(i);
+        Income i = repository.findById(userId).map(user -> {
+            salary.setIncome(user);
+            investments.setIncome(user);
+            allowance.setIncome(user);
+            miscellaneous.setIncome(user);
+            incomeRepository.save(i);
+        }).orElseThrow(() -> new NullPointerException("Not found User with id = " + userId));
         double incomeTotal = i.calculateIncome();
+        // Income i = incomeRepository.findById(userId).map(user -> {
+        //     commentRequest.setUser(user);
+        //     return commentRepository.save(commentRequest);
+        //   }).orElseThrow(() -> new ResourceNotFoundException("Not found User with id = " + userId));
+      
+        //   return new ResponseEntity<>(comment, HttpStatus.CREATED);
         // incomeRepository.saveAndFlush(total);
         return new ResponseEntity<>(i, HttpStatus.OK);
     }

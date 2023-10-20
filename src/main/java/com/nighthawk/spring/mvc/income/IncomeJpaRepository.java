@@ -5,7 +5,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.nighthawk.spring.mvc.user.User;
 
+
 import java.util.List;
+import jakarta.transaction.Transactional;
 
 /*
 Extends the JpaRepository interface from Spring Data JPA.
@@ -15,7 +17,7 @@ Extends the JpaRepository interface from Spring Data JPA.
  */
 
 public interface IncomeJpaRepository extends JpaRepository<Income, Long> {
-    List<Income> findAllByOrderByIdAsc(); // for now return a list, its concatenated and users have ability to expand if need be
+    List<Income> findAllByOrderByUserIdAsc(Long userId); // for now return a list, its concatenated and users have ability to expand if need be
     // I want this to return everything 
 
     List<Income> findAllByUser(User user);
@@ -27,6 +29,11 @@ public interface IncomeJpaRepository extends JpaRepository<Income, Long> {
     Income findByAllowance(double allowance);
 
     Income findByMiscellaneous(double miscellaneous);
+
+    // List<Income> findByUserId(Long postId);
+  
+    @Transactional
+    void deleteByUserId(Long userId);
     // Dashboard findByRaceAndUserAndBetActive(Race race, User user, Boolean betActive);
 
     // // Custom JPA query
