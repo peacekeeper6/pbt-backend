@@ -83,11 +83,11 @@ public class Expenses {
     @Column(nullable = true)
     private double miscellaneous;
     
-    public Expenses (User user, double groceries, double transportation, double education, double housing, double shopping, 
+    public Expenses (double groceries, double transportation, double education, double housing, double shopping, 
     double utilities, double insurance, double personal, double subscriptions, double investments, double miscellaneous) {
         // this.id = id;
         // user.setId(id);
-        this.user = user;
+        // this.user = user;
         this.groceries = groceries;
         this.transportation = transportation;
         this.education = education;

@@ -43,7 +43,7 @@ public class Income {
     @JoinColumn(name = "user_id", nullable = false) // this sets user id just fill it bro
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
-    private Income income;
+    private User user;
 
     // TODO: add annotations
     @Basic(optional = true)
@@ -71,9 +71,9 @@ public class Income {
         this.allowance = allowance;
         this.miscellaneous = miscellaneous;
     }
-    public void setIncome(Income i) {
-        this.income = i;
-    }
+    // public void setIncome(Income i) {
+    //     this.income = i;
+    // }
     public double calculateIncome () {
         // double dSalary = Double.parseDouble(sal);
         // double dInvestments = Double.parseDouble(inv);

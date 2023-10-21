@@ -67,8 +67,8 @@ public class Budgeting {
     // userid.setUser(userid);
     // entityManager.persist(userid);
 
-    public Budgeting(User user, double shopping, double eating, double subscriptions, double travel, double miscellaneous) {
-        this.user = user;
+    public Budgeting(double shopping, double eating, double subscriptions, double travel, double miscellaneous) {
+        // this.user = user;
         this.shopping = shopping;
         this.eating = eating;
         this.subscriptions = subscriptions;

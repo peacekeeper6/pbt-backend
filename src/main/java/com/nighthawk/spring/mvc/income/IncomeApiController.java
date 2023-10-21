@@ -26,16 +26,24 @@ public class IncomeApiController {
     @Autowired
     private IncomeJpaRepository incomeRepository;
 
-    @GetMapping("/{userId}/")
-    public ResponseEntity<List<Income>> getIncome(@PathVariable(value = "userId") Long userId) {
-        if (!repository.existsById(userId)) {
-            throw new NullPointerException("Cannot find User with id = " + userId); // placeholder exception, change later
-          }
+    // @GetMapping("/{userId}")
+    // public ResponseEntity<List<Income>> getIncome(@PathVariable(value = "userId") Long userId) {
+    //     if (!repository.existsById(userId)) {
+    //         throw new NullPointerException("Cannot find User with id = " + userId); // placeholder exception, change later
+    //       }
       
-          List<Income> incomes = incomeRepository.findAllByOrderByUserIdAsc(userId);
-          return new ResponseEntity<>(incomes, HttpStatus.OK);
-        // return new ResponseEntity<>(incomeRepository.findAllByOrderByIdAsc(), HttpStatus.OK);
-    }
+    //       List<Income> incomes = incomeRepository.findById(userId);
+    //       return new ResponseEntity<>(incomes, HttpStatus.OK);
+    //     // return new ResponseEntity<>(incomeRepository.findAllByOrderByIdAsc(), HttpStatus.OK);
+    // }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Income> getIncome(@PathVariable("id") Long userId) {
+    Income income = incomeRepository.findById(userId)
+        .orElseThrow(() -> new NullPointerException("Cannot find User with id = " + userId));
+
+    return new ResponseEntity<>(income, HttpStatus.OK);
+        }
 
     // @PostMapping("/updateAll") // ability to update one or all depending on how many boxes are filled
     // public ResponseEntity<Object> updateIncome(@RequestBody final Map<String, Double> m) {
@@ -74,13 +82,12 @@ public class IncomeApiController {
     //     incomeRepository.save(total);
     //     return new ResponseEntity<>(total + " listed successfully!", HttpStatus.CREATED);
     // }
-    @PostMapping("/create/{userId}/{salary}/{investments}/{allowance}/{miscellaneous}")
-    public ResponseEntity<Income> createIncome(@PathVariable(value = "userId") Long userId, @PathVariable(required=false) Income salary, @PathVariable(required=false) Income investments,
-    @PathVariable(required=false) Income allowance, @PathVariable(required=false) Income miscellaneous) {
-        Double dSalary = new Double(salary.toString());
-        Double dInvestments = new Double(investments.toString());
-        Double dAllowance = new Double(allowance.toString());
-        Double dMisellaneous = new Double(miscellaneous.toString());
+    @PostMapping("/create/{userId}")
+    public ResponseEntity<Income> createIncome(@PathVariable(value = "userId") Long userId, @RequestBody Income income) {
+        // Double dSalary = new Double(salary.toString());
+        // Double dInvestments = new Double(investments.toString());
+        // Double dAllowance = new Double(allowance.toString());
+        // Double dMisellaneous = new Double(miscellaneous.toString());
         // Double.parseDouble(salary);
         // double dInvestments = Double.parseDouble(investments);
         // double dAllowance = Double.parseDouble(allowance);
@@ -91,13 +98,11 @@ public class IncomeApiController {
         // // IncomeRepository.saveAndFlush(new Income(shopping, eatingOut, travel, miscellaneous));
         // incomeRepository.save(i);
         Income i = repository.findById(userId).map(user -> {
-            salary.setIncome(user);
-            investments.setIncome(user);
-            allowance.setIncome(user);
-            miscellaneous.setIncome(user);
-            incomeRepository.save(i);
-        }).orElseThrow(() -> new NullPointerException("Not found User with id = " + userId));
-        double incomeTotal = i.calculateIncome();
+            income.setUser(user);
+            // income.setTotal(income.calculateIncome());
+            return incomeRepository.save(income);
+        }).orElseThrow(() -> new NullPointerException("No Income object with userId = " + userId));
+        // double incomeTotal = i.calculateIncome();
         // Income i = incomeRepository.findById(userId).map(user -> {
         //     commentRequest.setUser(user);
         //     return commentRepository.save(commentRequest);
@@ -108,21 +113,35 @@ public class IncomeApiController {
         return new ResponseEntity<>(i, HttpStatus.OK);
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<Income> updateIncome(@PathVariable long id, @RequestBody Income changes) {
-        Optional<Income> optional = incomeRepository.findById(id);
-        if (optional.isPresent()) { // Good ID
-            Income a = optional.get(); // value from findByID
-            a.setSalary(changes.getSalary()); // value from findByID
-            a.setInvestments(changes.getInvestments()); // value from findByID
-            a.setAllowance(changes.getAllowance()); // value from findByID
-            a.setMiscellaneous(changes.getMiscellaneous()); // value from findByID
-            incomeRepository.save(a);
-            double incomeTotal = a.calculateIncome();
+    @PutMapping("/update/{userId}")
+    public ResponseEntity<Income> updateIncome(@PathVariable(value = "userId") Long userId, @RequestBody Income income
+        // @PathVariable long id, @RequestBody Income changes
+        ) {
+        Income changes = incomeRepository.findById(userId)
+            .orElseThrow(() -> new NullPointerException("No Income object with userId = " + userId));
+        // Optional<Income> optional = incomeRepository.findById(id);
+        changes.setSalary(income.getSalary());
+        changes.setInvestments(income.getInvestments());
+        changes.setAllowance(income.getAllowance());
+        changes.setMiscellaneous(income.getMiscellaneous());
+        // if (optional.isPresent()) { // Good ID
+        //     Income a = optional.get(); // value from findByID
+        //     a.setSalary(changes.getSalary()); // value from findByID
+        //     a.setInvestments(changes.getInvestments()); // value from findByID
+        //     a.setAllowance(changes.getAllowance()); // value from findByID
+        //     a.setMiscellaneous(changes.getMiscellaneous()); // value from findByID
+        //     incomeRepository.save(a);
+        //     double incomeTotal = a.calculateIncome();
             // incomeRepository.save(total);
-            return new ResponseEntity<>(a, HttpStatus.OK); // OK HTTP response: status code, headers, and body
+            return new ResponseEntity<>(incomeRepository.save(changes), HttpStatus.OK); // OK HTTP response: status code, headers, and body
         }
         // Bad ID
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        // return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    @DeleteMapping("/delete/{userId}")
+    public ResponseEntity<Income> deleteIncome(@PathVariable("userId") Long userId) {
+    incomeRepository.deleteById(userId);
+
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-}
+    }
+// }

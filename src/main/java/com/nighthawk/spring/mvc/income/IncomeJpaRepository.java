@@ -17,7 +17,7 @@ Extends the JpaRepository interface from Spring Data JPA.
  */
 
 public interface IncomeJpaRepository extends JpaRepository<Income, Long> {
-    List<Income> findAllByOrderByUserIdAsc(Long userId); // for now return a list, its concatenated and users have ability to expand if need be
+    // List<Income> findAllByOrderByUserAsc(User user); // for now return a list, its concatenated and users have ability to expand if need be
     // I want this to return everything 
 
     List<Income> findAllByUser(User user);
