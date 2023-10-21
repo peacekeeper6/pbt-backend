@@ -23,7 +23,7 @@ public interface BudgetingJpaRepository extends JpaRepository<Budgeting, Long> {
     
     // List<Dashboard> findAllByRace(Race race);
 
-    // List<Dashboard> findAllById(Long id);
+    List<Budgeting> findAllByUserId(Long id);
 
     List<Budgeting> findAllByUser(User user);
     

@@ -2,6 +2,7 @@ package com.nighthawk.spring.mvc.expenses;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.nighthawk.spring.mvc.budgeting.Budgeting;
 import com.nighthawk.spring.mvc.user.User;
 
 import jakarta.transaction.Transactional;
@@ -22,6 +23,7 @@ public interface ExpensesJpaRepository extends JpaRepository<Expenses, Long> {
     // List<Dashboard> findAllByRace(Race race);
 
     // List<Dashboard> findAllById(Long id);
+    List<Expenses> findAllByUserId(Long id);
 
     List<Expenses> findAllByUser(User user);
     

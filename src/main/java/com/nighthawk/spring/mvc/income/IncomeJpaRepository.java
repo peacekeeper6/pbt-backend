@@ -3,6 +3,7 @@ package com.nighthawk.spring.mvc.income;
 import org.springframework.data.jpa.repository.JpaRepository;
 // import org.springframework.data.jpa.repository.Query;
 
+import com.nighthawk.spring.mvc.budgeting.Budgeting;
 import com.nighthawk.spring.mvc.user.User;
 
 
@@ -19,6 +20,8 @@ Extends the JpaRepository interface from Spring Data JPA.
 public interface IncomeJpaRepository extends JpaRepository<Income, Long> {
     // List<Income> findAllByOrderByUserAsc(User user); // for now return a list, its concatenated and users have ability to expand if need be
     // I want this to return everything 
+
+    List<Income> findAllByUserId(Long id);
 
     List<Income> findAllByUser(User user);
     
