@@ -37,7 +37,7 @@ public class DashboardApiController {
     private ExpensesJpaRepository expensesRepository;
 
     @GetMapping("/{userId}")
-        public ResponseEntity<List<Dashboard>> getDashboard(@PathVariable("userId") Long userId, 
+        public ResponseEntity<Dashboard> getDashboard(@PathVariable("userId") Long userId, 
         @PathVariable("budgeting") Budgeting budgeting, @PathVariable("income") Income income, 
         @PathVariable("expenses") Expenses expenses) {
         Dashboard dashboard = dashboardRepository.findById(userId)
